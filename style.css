@@ -1,0 +1,130 @@
+.background {
+    filter: blur(50px);
+    -webkit-filter: blur(8px);
+    position:absolute;
+    top:0px;
+    left:0px;
+    justify-content:center;
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    opacity: 0.2;
+    z-index: -1;
+}
+
+.full_div {
+    margin:15;
+    padding-left:23px;
+    padding-right:23px;
+    padding-top:20px;
+    padding-bottom:20px;
+    display:inline-block;
+    border-radius:15px;
+    box-shadow: 10px 10px 10px #cfcfcf;
+    position:relative;
+    backdrop-filter: blur(5px);
+} 
+
+.left_column {
+    float:left;
+    padding:5px;
+    width:240px;
+    height: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align:center;
+}
+
+.box_art {
+    max-height: 100%;
+    max-width: 100%;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #cfcfcf;
+    border-radius: 15px;
+}
+
+.description {
+    padding-left: 20px;
+    padding-right:20px;
+    padding-bottom:25px;
+    float:left;
+    margin-top:10px;
+    width:450px;
+    font-size:12px;
+    height:315px
+}
+
+.right_column {
+    background-color:rgba(150,150,150,.3);
+    border-radius:15px;
+    float:left;
+    padding:10px;
+    width:250px;
+    margin-top:10px;
+    font-size:14px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align:center;
+    box-shadow: 5px 5px 5px #cfcfcf;
+    height:250px
+}
+
+.info_summary {
+    display:inline-block;
+}
+
+.bottom_row {
+    clear:both;
+    padding:10px;
+    width:980px;
+}
+
+.bottom_row_entry_left {
+    width:auto;
+    float:left;
+}
+
+.bottom_row_entry_right {
+    width:auto;
+    float:right;
+}
+
+.info_icon {
+    padding:2px;
+    height:15px;
+}
+
+.weight_info {
+    background-color:rgba(150,150,150,.3);
+    width: 118px;
+    height:35px;
+    position:absolute;
+    bottom:75px;
+    right:23px;
+    border-radius:10px;
+    box-shadow: 5px 5px 5px #cfcfcf;
+    text-align:center;
+    padding:5px;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+}
+
+.rating_info {
+    background-color:rgba(150,150,150,.3);
+    width: 118px;
+    height:35px;
+    position:absolute;
+    bottom:75px;
+    right:163px;
+    border-radius:10px;
+    box-shadow: 5px 5px 5px #cfcfcf;
+    text-align:center;
+    padding:5px;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+}
