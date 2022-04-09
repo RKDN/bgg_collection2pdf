@@ -7,8 +7,10 @@ from os.path import exists
 from xml.etree import ElementTree
 
 UserName             = input("Enter your BGG UserName: ")
+card_flag            = input("Card Mode? : (y/N)")
 sleep_time           = 10
 successful_responses = 0
+card_mode            = card_flag.lower() == "y" or card_flag.lower() == "yes"
 
 def remove_non_english_chars(input):
     encoded_string = input.encode("ascii", "ignore")
@@ -45,8 +47,12 @@ def get_links(elem, name):
                 values.append(item)
     return values
 
-with open('output.html', 'w') as file:
-        file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
+if(card_mode):
+    with open('output.html', 'w') as file:
+            file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
+else:
+    with open('output.html', 'w') as file:
+            file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
 
 if(exists('collection.xml')):
     with open('collection.xml', 'r') as file:
@@ -101,7 +107,10 @@ for item in items:
             #Reading the Game XML
             image       = get_prop_text(items[0], 'image')
             name        = get_prop_value(items[0], 'name')
-            description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=1100, placeholder='...')
+            if(card_mode):
+                description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=500, placeholder='...')
+            else:
+                description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=1100, placeholder='...')
             minplayers  = str(get_prop_value(items[0], 'minplayers') or '')
             maxplayers  = str(get_prop_value(items[0], 'maxplayers') or '')
             published   = get_prop_value(items[0], 'yearpublished')
@@ -132,8 +141,12 @@ for item in items:
                     with open('./Images/' + obj_id + ".jpg", 'wb') as f:
                         shutil.copyfileobj(res.raw, f)
 
-            with open('template.html', 'r') as file:
-                template = file.read()
+            if(card_mode):
+                with open('template_card.html', 'r') as file:
+                    template = file.read()
+            else:    
+                with open('template.html', 'r') as file:
+                    template = file.read()
 
             template = template.replace('{{image}}', "./Images/" + obj_id + ".jpg" or "")
             template = template.replace('{{GameName}}', name or "")
