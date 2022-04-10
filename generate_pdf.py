@@ -4,10 +4,14 @@ import shutil
 import math
 from time import sleep
 from os.path import exists
+from os import environ
 from xml.etree import ElementTree
+import logging
 
 sleep_time           = 10
 successful_responses = 0
+LOGLEVEL = environ.get('LOGLEVEL', 'WARNING').upper()
+logging.basicConfig(level=LOGLEVEL)
 
 user_name            = input("Enter your BGG UserName: ")
 card_flag            = input("Card Mode? : (y/N)")
@@ -146,6 +150,7 @@ def download_image(obj_id):
 
 ######### End Functions ######### 
 
+logging.info('starting');
 #Write the html header and link to the approprate CSS file.
 if(card_mode):
     with open('output.html', 'w') as file:
@@ -156,12 +161,14 @@ else:
 
 #Check if collection.xml exists. If it does, read it.
 if(exists('collection.xml')):
+    logging.warning('Reading collection.xml')
     with open('collection.xml', 'r', encoding="utf-8") as file:
         ur = file.read()
         items = ElementTree.fromstring(ur)
 
 #Otherwise we request the XML from BGG
 else:
+    logging.warning('Reading collection from bgg')
     ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
     with open('collection.xml', 'w', encoding="utf-8") as file:
         file.write(ur.text) 
@@ -220,7 +227,7 @@ for item in items:
 
             #Write out the game info XML.
             with open(game_xml, 'w', encoding="utf-8") as file:
-                print("Writing: " + name + " to " + game_xml)
+                logging.info("Writing: " + name + " to " + game_xml)
                 file.write(gr.text)
                 items = ElementTree.fromstring(gr.content)
 
