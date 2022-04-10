@@ -156,7 +156,7 @@ else:
 
 #Check if collection.xml exists. If it does, read it.
 if(exists('collection.xml')):
-    with open('collection.xml', 'r') as file:
+    with open('collection.xml', 'r', encoding="utf-8") as file:
         ur = file.read()
         items = ElementTree.fromstring(ur)
 
