@@ -3,4 +3,5 @@ collection.xml
 game_xml/*.xml
 .vs
 images/*.*
+Images/*.*
 !images/place_holder.txt
