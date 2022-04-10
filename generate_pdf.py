@@ -102,7 +102,7 @@ def template_to_output_entry(game_info, card_mode):
     else:
         template = template.replace('{{Rating}}', str(round((float(game_info.avg_rating) + float(game_info.my_rating)) / 2, 1)))
 
-    with open('output.html', 'a') as file:
+    with open('output.html', 'a', encoding="utf-8") as file:
         file.write(template)
 
 class GameInfo:
@@ -163,8 +163,8 @@ if(exists('collection.xml')):
 #Otherwise we request the XML from BGG
 else:
     ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
-    with open('collection.xml', 'w') as file:
-        file.write(ur.text.encode('utf-8'))
+    with open('collection.xml', 'w', encoding="utf-8") as file:
+        file.write(ur.text) 
         items = ElementTree.fromstring(ur.content)
 
 #Parsing user collection XML
@@ -190,7 +190,7 @@ for item in items:
 
         #Check to see if the XML already exists. If it does, don't re-request it.
         if(exists(game_xml)):
-            with open(game_xml, 'r') as file:
+            with open(game_xml, 'r', encoding="utf-8") as file:
                 gr = file.read()
                 items = ElementTree.fromstring(gr)
         else:
@@ -219,9 +219,9 @@ for item in items:
                         sleep_time = max(10,sleep_time)
 
             #Write out the game info XML.
-            with open(game_xml, 'w') as file:
+            with open(game_xml, 'w', encoding="utf-8") as file:
                 print("Writing: " + name + " to " + game_xml)
-                file.write(gr.text.encode('utf-8'))
+                file.write(gr.text)
                 items = ElementTree.fromstring(gr.content)
 
         #Now that we have all of the information we need, create the HTML page.
