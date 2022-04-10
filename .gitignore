@@ -1,0 +1,6 @@
+output.html
+collection.xml
+game_xml/*.xml
+.vs
+images/*.*
+!images/place_holder.txt
