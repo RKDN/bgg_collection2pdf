@@ -2,7 +2,6 @@ import requests
 import textwrap
 import shutil
 import math
-import pdfkit
 from time import sleep
 from os.path import exists
 from os import environ
