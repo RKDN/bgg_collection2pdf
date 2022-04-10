@@ -2,6 +2,7 @@ import requests
 import textwrap
 import shutil
 import math
+import pdfkit
 from time import sleep
 from os.path import exists
 from os import environ
@@ -10,7 +11,7 @@ import logging
 
 sleep_time           = 10
 successful_responses = 0
-LOGLEVEL = environ.get('LOGLEVEL', 'WARNING').upper()
+LOGLEVEL = environ.get('LOGLEVEL', 'INFO').upper()
 logging.basicConfig(level=LOGLEVEL)
 
 user_name            = input("Enter your BGG UserName: ")
@@ -246,7 +247,6 @@ for item in items:
 #Write the html trailer.
 with open('output.html', 'a') as file:
         file.write("</body></html>")
-
 
 
 
