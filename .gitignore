@@ -3,5 +3,6 @@ collection.xml
 game_xml/*.xml
 .vs
 images/*.*
-Images/*.*
-!images/place_holder.txt
+!images/place_holder.txt 
+!images/icon_duration.png 
+!images/icon_players.png
