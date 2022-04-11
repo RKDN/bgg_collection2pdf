@@ -1,6 +1,6 @@
 .background {
-    filter: blur(50px);
-    -webkit-filter: blur(8px);
+    filter: blur(20px);
+    -webkit-filter: blur(20px);
     position:absolute;
     top:0px;
     left:0px;
@@ -8,7 +8,7 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-    opacity: 0.2;
+    opacity: 0.3;
     z-index: -1;
 }
 
@@ -20,7 +20,7 @@
     padding-bottom:20px;
     display:inline-block;
     border-radius:15px;
-    box-shadow: 10px 10px 10px #cfcfcf;
+    box-shadow: 10px 10px 10px rgba(170,170,170,.3);
     position:relative;
     backdrop-filter: blur(5px);
 } 
@@ -68,7 +68,7 @@
     justify-content: center;
     align-items: center;
     text-align:center;
-    box-shadow: 5px 5px 5px #cfcfcf;
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     height:250px
 }
 
@@ -105,7 +105,7 @@
     bottom:75px;
     right:23px;
     border-radius:10px;
-    box-shadow: 5px 5px 5px #cfcfcf;
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
     padding:5px;
     display: flex;
@@ -121,7 +121,7 @@
     bottom:75px;
     right:163px;
     border-radius:10px;
-    box-shadow: 5px 5px 5px #cfcfcf;
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
     padding:5px;
     display: flex;
