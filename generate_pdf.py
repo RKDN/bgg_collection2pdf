@@ -2,7 +2,6 @@ import requests
 import textwrap
 import shutil
 import math
-import pdfkit
 from time import sleep
 from os.path import exists
 from os import environ
@@ -170,7 +169,15 @@ if(exists('collection.xml')):
 #Otherwise we request the XML from BGG
 else:
     logging.warning('Reading collection from bgg')
-    ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
+    return_text = ElementTree.fromstring('<?xml version="1.0" encoding="utf-8" standalone="yes"?><message>	Your request for this collection has been accepted and will be processed.  Please try again later for access.</message>').text
+    while("Please try again later for access." in return_text):
+        ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
+        return_text = ElementTree.fromstring(ur.content).text
+
+        if("Please try again later for access." in return_text):
+            logging.warning('BGG is working on the request. Sleeping 20 seconds.')
+            sleep(20)
+
     with open('collection.xml', 'w', encoding="utf-8") as file:
         file.write(ur.text) 
         items = ElementTree.fromstring(ur.content)
