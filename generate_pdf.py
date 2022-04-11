@@ -169,13 +169,13 @@ if(exists('collection.xml')):
 #Otherwise we request the XML from BGG
 else:
     logging.warning('Reading collection from bgg')
-    return_text = ElementTree.fromstring('<?xml version="1.0" encoding="utf-8" standalone="yes"?><message>	Your request for this collection has been accepted and will be processed.  Please try again later for access.</message>').text
-    while("Please try again later for access." in return_text):
+    status = 0
+    while(status != 200):
         ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
-        return_text = ElementTree.fromstring(ur.content).text
+        status = ur.status_code
 
-        if("Please try again later for access." in return_text):
-            logging.warning('BGG is working on the request. Sleeping 20 seconds.')
+        if(status != 200):
+            logging.warning('Waiting for BGG XML. Sleeping 20 seconds.')
             sleep(20)
 
     with open('collection.xml', 'w', encoding="utf-8") as file:
@@ -209,27 +209,26 @@ for item in items:
                 gr = file.read()
                 items = ElementTree.fromstring(gr)
         else:
-            #This is a variable only use for error checking.
-            return_text = "<error>"
-
+            #Request status
+            status = 0
+            
             #While <error> is in the reponse, keep trying, but with a delay.
-            while("<error>" in return_text):
-                sleep(.5)
-
+            while(status != 200):
                 #Grab the game info XML
                 gr = requests.get("https://boardgamegeek.com/xmlapi2/thing?id=" + obj_id + "&stats=1")
-                return_text = gr.text
-
+                status = gr.status_code
+                
                 #This is all code related to delaying attempts when we get a timeout.
-                if("<error>" in return_text):
-                    error = ElementTree.fromstring(return_text)
+                if(status != 200):
+                    error = ElementTree.fromstring(gr.content)
                     print("Sleeping " + str(sleep_time) + " Seconds: " + error.find('message').text)
                     sleep(sleep_time)
                     sleep_time *= 2
+                    sleep_time = min(120,sleep_time)
                     successful_responses = 0
                 else:
                     successful_responses += 1
-                    if(successful_responses > 15):
+                    if(successful_responses % 15 == 0):
                         sleep_time /= 2
                         sleep_time = max(10,sleep_time)
 
