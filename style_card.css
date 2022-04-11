@@ -13,23 +13,21 @@
 }
 
 .full_div {
-    margin:15;
-    padding-left:23px;
-    padding-right:23px;
-    padding-top:20px;
-    padding-bottom:20px;
+    margin:0px;
+    margin-right:-4px;
+    padding:4px;
     display:inline-block;
-    border-radius:15px;
-    box-shadow: 10px 10px 10px rgba(170,170,170,.3);
     position:relative;
-    backdrop-filter: blur(5px);
     height:650px;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 } 
 
 .left_column {
     padding:5px;
-    width:235px;
-    margin:10px;
+    width:260px;
+    margin-right:5px;
     float:left;
 }
 
@@ -49,29 +47,28 @@
     font-size:12px;
     height:360px;
     background-color:rgba(150,150,150,.3);
-    border-radius:18px;
+    border-radius:10px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 }
 
 .right_column {
     display:relative;
     float:left;
-    margin-left:10px;
-    padding-left: 20px;
-    padding-right:20px;
-    padding-bottom:25px;
-    margin-top:10px;
-    width:150px;
-    font-size:13px;
-    height:460px;
+    padding:10px;
+    margin-top:5px;
+    width:170px;
+    font-size:16px;
+    height:470px;
     background-color:rgba(150,150,150,.3);
-    border-radius:14px;
+    border-radius:10px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
-}
-
-.info_summary {
-    padding-top: 10px;
-    display:inline-block;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
+    text-align:center;
 }
 
 .bottom_row {
@@ -88,7 +85,7 @@
 
 .bottom_row_entry_right {
     position:absolute;
-    bottom:135px;
+    bottom:125px;
     right:27px;
     font-size: 12;
     width:auto;
@@ -102,32 +99,40 @@
 
 .weight_info {
     position:absolute;
-    bottom:80px;
-    right:20px;
+    bottom:70px;
+    right:10px;
     background-color:rgba(150,150,150,.3);
-    width: 80px;
+    width: 75px;
     height:35px;
-    border-radius:10px;
+    border-radius:5px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
     padding:5px;
     display: flex;
     align-items:center;
     justify-content:center;
+    font-size: 12;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 }
 
 .rating_info {
     position:absolute;
-    bottom:80px;
-    right:140px;
+    bottom:70px;
+    right:113px;
     background-color:rgba(150,150,150,.3);
-    width: 80px;
+    width: 75px;
     height:35px;
-    border-radius:10px;
+    border-radius:5px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
     padding:5px;
     display: flex;
     align-items:center;
     justify-content:center;
+    font-size: 12;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 }

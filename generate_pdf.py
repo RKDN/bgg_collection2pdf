@@ -58,16 +58,19 @@ def template_to_output_entry(game_info, card_mode):
 
     #Replace values in the template.
     template = template.replace('{{image}}', "./Images/" + game_info.obj_id + ".jpg" or "")
-    template = template.replace('{{GameName}}', game_info.name or "")
-    template = template.replace('{{Description}}', game_info.description or "")
-    template = template.replace('{{Published}}', game_info.published or "")
-    template = template.replace('{{Publisher}}', game_info.publisher or "")
-    template = template.replace('{{Designer}}', game_info.designer or "")
-    template = template.replace('{{Artist}}', game_info.artist1 or "")
+    template = template.replace('{{GameName}}', game_info.name or "N/A")
+    template = template.replace('{{Description}}', game_info.description or "N/A")
+    template = template.replace('{{Published}}', game_info.published or "N/A")
+    template = template.replace('{{Publisher}}', game_info.publisher or "N/A")
+    template = template.replace('{{Designer}}', game_info.designer or "N/A")
+    template = template.replace('{{Artist}}', game_info.artist1 or "N/A")
     template = template.replace('{{Category}}', game_info.category1 + "<br/>" + game_info.category2)
 
     #Length of mechanics list
-    mechanics_list_max_length = 75
+    if(card_mode):
+        mechanics_list_max_length = 65
+    else:
+        mechanics_list_max_length = 75
 
     #Lengths of mechanics when placed together into a list.
     three_mechanics_length= len(game_info.mechanic1 + game_info.mechanic2 + game_info.mechanic3)
@@ -113,7 +116,7 @@ class GameInfo:
     def __init__(self, items, card_mode, obj_id, my_rating, avg_rating):
 
         if(card_mode):
-            self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=500, placeholder='...')
+            self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=650, placeholder='...')
         else:
             self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=1100, placeholder='...')
 
