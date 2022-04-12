@@ -2,6 +2,7 @@ import requests
 import textwrap
 import shutil
 import math
+import argparse
 from time import sleep
 from os.path import exists
 from os import environ
@@ -13,14 +14,23 @@ successful_responses = 0
 LOGLEVEL = environ.get('LOGLEVEL', 'INFO').upper()
 logging.basicConfig(level=LOGLEVEL)
 
-user_name            = input("Enter your BGG UserName: ")
-card_flag            = input("Card Mode? : (y/N)")
-card_mode            = card_flag.lower() == "y" or card_flag.lower() == "yes"
-if(card_mode != True):
-    index_flag           = input("Index : (y/N)")
-    index                = index_flag.lower() == "y" or index_flag.lower() == "yes"
+parser = argparse.ArgumentParser(description='Create an html/pdf output of board game collection based on UserName from boardgamegeek.com.')
+parser.add_argument('-u','--username', dest='username', action='store', default='', help='User to pull BGG collection data from. (Required)')
+parser.add_argument('-c','--cardmode', dest='cardmode', action='store_true', help='Create cards instead of a catalog. (default=Off)')
+parser.add_argument('-i','--index', dest='index', action='store_true', help='Enables creating an index. (default=Off)')
+args = parser.parse_args()
+
+if(args.username == ''):
+    user_name            = input("Enter your BGG UserName: ")
 else:
-    index = False
+    user_name = args.username
+card_mode            = args.cardmode or False
+index                = args.index    or False
+
+if(len(user_name) < 1):
+    logging.error("No username specified, exiting.")
+    sys.exit()
+
 dict_player_count    = {}
 dict_category        = {}
 
@@ -232,7 +242,7 @@ for item in items:
                 #This is all code related to delaying attempts when we get a timeout.
                 if(status != 200):
                     error = ElementTree.fromstring(gr.content)
-                    print("Sleeping " + str(sleep_time) + " Seconds: " + error.find('message').text)
+                    logging.info("Sleeping " + str(sleep_time) + " Seconds: " + error.find('message').text)
                     sleep(sleep_time)
                     sleep_time *= 2
                     sleep_time = min(120,sleep_time)
