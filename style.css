@@ -13,7 +13,7 @@
 }
 
 .full_div {
-    margin:.5%;
+    margin:1%;
     padding:2%;
     display:inline-block;
     border-radius:15px;
@@ -23,7 +23,7 @@
     border-style: solid;
     border-color: rgba(170,170,170,.3);
     border-width: 1px;
-    width:95%;
+    width:93.5%;
 } 
 
 .left_column {
