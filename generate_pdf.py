@@ -19,6 +19,8 @@ card_mode            = card_flag.lower() == "y" or card_flag.lower() == "yes"
 if(card_mode != True):
     index_flag           = input("Index : (y/N)")
     index                = index_flag.lower() == "y" or index_flag.lower() == "yes"
+else:
+    index = False
 dict_player_count    = {}
 dict_category        = {}
 
