@@ -165,7 +165,7 @@ if(card_mode):
             file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
 else:
     with open('output.html', 'w') as file:
-            file.write('<html><head><link href="style.css" rel="stylesheet" "type="text/css"></head><body>')
+            file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
 
 #Check if collection.xml exists. If it does, read it.
 if(exists('collection.xml')):
