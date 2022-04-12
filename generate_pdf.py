@@ -165,7 +165,7 @@ if(card_mode):
             file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
 else:
     with open('output.html', 'w') as file:
-            file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
+            file.write('<html><head><link href="style.css" rel="stylesheet" "type="text/css"></head><body>')
 
 #Check if collection.xml exists. If it does, read it.
 if(exists('collection.xml')):
@@ -222,6 +222,7 @@ for item in items:
             
             #While <error> is in the reponse, keep trying, but with a delay.
             while(status != 200):
+                
                 #Grab the game info XML
                 gr = requests.get("https://boardgamegeek.com/xmlapi2/thing?id=" + obj_id + "&stats=1")
                 status = gr.status_code

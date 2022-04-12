@@ -13,26 +13,24 @@
 }
 
 .full_div {
-    margin:15;
-    padding-left:23px;
-    padding-right:23px;
-    padding-top:20px;
-    padding-bottom:20px;
+    margin:.5%;
+    padding:2%;
     display:inline-block;
     border-radius:15px;
-    box-shadow: 10px 10px 10px rgba(170,170,170,.3);
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     position:relative;
     backdrop-filter: blur(5px);
     border-style: solid;
     border-color: rgba(170,170,170,.3);
     border-width: 1px;
+    width:95%;
 } 
 
 .left_column {
     float:left;
-    padding:5px;
-    width:240px;
-    height: 320px;
+    padding:1%;
+    width:22.3%;
+    height: 24%;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -49,30 +47,29 @@
 }
 
 .description {
-    padding-left: 20px;
-    padding-right:20px;
-    padding-bottom:25px;
+    padding-left: 2%;
+    padding-right:2%;
+    padding-bottom:2%;
     float:left;
-    margin-top:10px;
-    width:450px;
-    font-size:12px;
-    height:315px
+    width:44.2%;
+    font-size:72%;
+    height:25%
 }
 
 .right_column {
     background-color:rgba(150,150,150,.3);
     border-radius:15px;
     float:left;
-    padding:10px;
-    width:250px;
-    margin-top:10px;
-    font-size:14px;
+    padding:1%;
+    width:24.2%;
+    margin-top:.2%;
+    font-size:78%;
     display: flex;
     justify-content: center;
     align-items: center;
     text-align:center;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
-    height:250px
+    height:19%;
 }
 
 .info_summary {
@@ -81,8 +78,9 @@
 
 .bottom_row {
     clear:both;
-    padding:10px;
-    width:980px;
+    margin:.5%;
+    width:100%;
+    font-size:78%;
 }
 
 .bottom_row_entry_left {
@@ -92,25 +90,26 @@
 
 .bottom_row_entry_right {
     width:auto;
+    text-align: right;
     float:right;
 }
 
 .info_icon {
-    padding:2px;
-    height:15px;
+    padding-top:.5%;
+    height:1%;
 }
 
 .weight_info {
     background-color:rgba(150,150,150,.3);
-    width: 118px;
-    height:35px;
+    width: 10%;
+    height:9%;
     position:absolute;
-    bottom:75px;
-    right:23px;
+    top:73%;
+    right:3.2%;
     border-radius:10px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
-    padding:5px;
+    padding:.5%;
     display: flex;
     align-items:center;
     justify-content:center;
@@ -118,15 +117,15 @@
 
 .rating_info {
     background-color:rgba(150,150,150,.3);
-    width: 118px;
-    height:35px;
+    width: 10%;
+    height:9%;
     position:absolute;
-    bottom:75px;
-    right:163px;
+    top:73%;
+    right:17.4%;
     border-radius:10px;
     box-shadow: 5px 5px 5px rgba(170,170,170,.3);
     text-align:center;
-    padding:5px;
+    padding:.5%;
     display: flex;
     align-items:center;
     justify-content:center;
