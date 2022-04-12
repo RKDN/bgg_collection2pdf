@@ -23,6 +23,9 @@
     box-shadow: 10px 10px 10px rgba(170,170,170,.3);
     position:relative;
     backdrop-filter: blur(5px);
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 } 
 
 .left_column {
@@ -127,4 +130,24 @@
     display: flex;
     align-items:center;
     justify-content:center;
+}
+
+h3 {
+    padding-left: 10px;
+    padding-top:20px;
+    writing-mode: vertical-lr;
+    float:left;
+}
+
+ul {
+    list-style:none;
+    column-count: 4;
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    width:960px;
+    font-size:10px;
+    border-radius:10px;
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
+    background-color:rgba(150,150,150,.3);
+    padding:10px;
 }

@@ -136,3 +136,23 @@
     border-color: rgba(170,170,170,.3);
     border-width: 1px;
 }
+
+h3 {
+    padding-left: 10px;
+    padding-top:20px;
+    writing-mode: vertical-lr;
+    float:left;
+}
+
+ul {
+    list-style:none;
+    column-count: 4;
+    -moz-column-count: 4;
+    -webkit-column-count: 4;
+    width:960px;
+    font-size:10px;
+    border-radius:10px;
+    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
+    background-color:rgba(150,150,150,.3);
+    padding:10px;
+}

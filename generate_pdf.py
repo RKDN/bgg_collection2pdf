@@ -16,6 +16,11 @@ logging.basicConfig(level=LOGLEVEL)
 user_name            = input("Enter your BGG UserName: ")
 card_flag            = input("Card Mode? : (y/N)")
 card_mode            = card_flag.lower() == "y" or card_flag.lower() == "yes"
+if(card_mode != True):
+    index_flag           = input("Index : (y/N)")
+    index                = index_flag.lower() == "y" or index_flag.lower() == "yes"
+dict_player_count    = {}
+dict_category        = {}
 
 ######### Begin Functions ######### 
 
@@ -253,9 +258,77 @@ for item in items:
             #Write to output using the approprate template.    
             template_to_output_entry(game_info,card_mode)
 
+            for count in range(int(game_info.minplayers), int(game_info.maxplayers)):
+                if(count not in dict_player_count):
+                    dict_player_count[count] = []
+                dict_player_count[count].append(game_info)
+
+            for x in get_links(items[0], 'boardgamecategory'):
+                category = x.attrib['value']
+                if(category not in dict_category):
+                    dict_category[category] = []
+                dict_category[category].append(game_info)
+
+#If someone knows how to force page breaks in a more sane way please make this not hurt my head.
+if(index):
+    i = 1
+    new_page_count = 320
+    with open('output.html', 'a') as file:
+        file.write('<p style="page-break-after: always;">\n')
+        file.write('<div style="padding:40px"></div>')
+        for count in range(1,10):
+            file.write("<h3>" + str(count) + " player games:" + "</h3>\n")
+            file.write("<ul>\n")
+            for game in dict_player_count[count]:
+                if(i % new_page_count == 0):
+                    file.write("</ul>\n")
+                    file.write('</p>\n')
+                    file.write('<p style="page-break-after: always;">\n')
+                    file.write('<div style="padding:40px"></div>')
+                    file.write("<h3>" + str(count) + " player games:" + "</h3>\n")
+                    file.write("<ul>\n")
+                file.write("<li>" + game.name + "</li>\n")
+                i += 1
+            file.write("</ul>\n")
+            if(len(dict_player_count[count]) < 33 or i % new_page_count < 33):
+                file.write('<div style="padding:'+ str(55 - min(len(dict_player_count[count]), i % new_page_count)) +'px"></div>')
+                i = min(new_page_count, (i % new_page_count + (33 - min(len(dict_player_count[count]), i % new_page_count)) ))
+            file.write('</p>\n')
+
+    i = 1
+    new_ul_space   = 10
+    new_page_count = 300
+    with open('output.html', 'a') as file:
+        file.write('<p style="page-break-after: always;">\n')
+        file.write('<div style="padding:40px"></div>')
+        for cat in sorted(dict_category):
+            i = min(new_page_count, i % new_page_count + new_ul_space)
+            if(i % new_page_count == 0):
+                file.write("</ul>\n")
+                file.write('</p>\n')
+                file.write('<p style="page-break-after: always;">\n')
+                file.write('<div style="padding:40px"></div>')
+                i += 1
+            file.write('<ul style="margin-left: 75px">\n')
+            file.write("<b>" + str(cat) + " games:" + "</b>\n")
+            for game in dict_category[cat]:
+                if(i % new_page_count == 0):
+                    file.write("</ul>\n")
+                    file.write('</p>\n')
+                    file.write('<p style="page-break-after: always;">\n')
+                    file.write('<div style="padding:40px"></div>')
+                    file.write('<ul style="margin-left: 75px">\n')
+                    file.write("<b>" + str(cat) + " games:" + "</b>\n")
+                file.write("<li>" + game.name + "</li>\n")
+                i += 1
+            file.write("</ul>\n")
+            file.write('</p>\n')
+
 #Write the html trailer.
 with open('output.html', 'a') as file:
         file.write("</body></html>")
+
+
 
 
 
