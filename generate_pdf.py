@@ -20,7 +20,7 @@ parser.add_argument('-u','--username', dest='username', action='store', default=
 parser.add_argument('-c','--cardmode', dest='cardmode', action='store_true', help='Create cards instead of a catalog. (default=Off)')
 parser.add_argument('-i','--index', dest='index', action='store_true', help='Enables creating an index. (default=Off)')
 parser.add_argument('--clean_images', dest='clean_images', action='store_true', help='Clear out local images cache. (default=Off)')
-parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local images cache. (default=Off)')
+parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local xml cache. (default=Off)')
 args = parser.parse_args()
 
 if(args.clean_images):
