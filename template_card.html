@@ -2,15 +2,12 @@
 <div class="full_div">
     <img src="{{image}}" class="background">
     <div class="left_column">
-        <center>
-            <img src="{{image}}" class="box_art">
-        </center>
-        <div class="description">
-            <center><b>{{GameName}}</b></center>
-            <hr>
+        <center><b>{{GameName}}</b></center>
+        <hr>
+        
+        <img src="{{image}}" class="box_art">
 
-            {{Description}}
-        </div>
+        {{Description}}
     </div>
 
     <div class="right_column">
@@ -29,14 +26,9 @@
     <div class="weight_info">
         <b>Weight: {{Weight}}</b>
     </div>
-    <br>
+    
     <div class="rating_info">
         <b>Rating: {{Rating}}</b>
-    </div>
-    <div class="bottom_row">
-        <hr>
-        <span class="bottom_row_entry_left"> {{Cat0}} {{Cat1}} {{Cat2}} {{Cat3}}</span>
-        
     </div>
 
     <span class="bottom_row_entry_right">
@@ -44,6 +36,11 @@
         &nbsp;&nbsp;&nbsp;
         <img src="./Images/icon_duration.png"  class="info_icon"> {{d}}
     </span>
-    
+
+    <div class="bottom_row">
+        <hr>
+        <span class="bottom_row_entry_left"> {{Cat0}} {{Cat1}} {{Cat2}} {{Cat3}}</span>
+        
+    </div>
 </div>
 

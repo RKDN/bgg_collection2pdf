@@ -123,7 +123,7 @@ class GameInfo:
     def __init__(self, items, card_mode, obj_id, my_rating, avg_rating):
 
         if(card_mode):
-            self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=650, placeholder='...')
+            self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=550, placeholder='...')
         else:
             self.description = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=1100, placeholder='...')
 
