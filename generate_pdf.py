@@ -3,22 +3,39 @@ import textwrap
 import shutil
 import math
 import argparse
+import os
+import sys
 from time import sleep
 from os.path import exists
-from os import environ
 from xml.etree import ElementTree
 import logging
 
 sleep_time           = 10
 successful_responses = 0
-LOGLEVEL = environ.get('LOGLEVEL', 'INFO').upper()
+LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
 logging.basicConfig(level=LOGLEVEL)
 
 parser = argparse.ArgumentParser(description='Create an html/pdf output of board game collection based on UserName from boardgamegeek.com.')
 parser.add_argument('-u','--username', dest='username', action='store', default='', help='User to pull BGG collection data from. (Required)')
 parser.add_argument('-c','--cardmode', dest='cardmode', action='store_true', help='Create cards instead of a catalog. (default=Off)')
 parser.add_argument('-i','--index', dest='index', action='store_true', help='Enables creating an index. (default=Off)')
+parser.add_argument('--clean_images', dest='clean_images', action='store_true', help='Clear out local images cache. (default=Off)')
+parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local images cache. (default=Off)')
 args = parser.parse_args()
+
+if(args.clean_images):
+    for f in os.listdir('./Images'):
+        if(exists(os.path.join('./Images', f))):
+            os.remove(os.path.join('./Images', f))
+    sys.exit()
+
+if(args.clean_xml):
+    if(exists('./collection.xml')):
+        os.remove('./collection.xml')
+    for f in os.listdir('./game_xml'):
+        if(os.path.join('./game_xml', f)):
+            os.remove(os.path.join('./game_xml', f))
+    sys.exit()
 
 if(args.username == ''):
     user_name            = input("Enter your BGG UserName: ")
@@ -234,7 +251,7 @@ for item in items:
             
             #While <error> is in the reponse, keep trying, but with a delay.
             while(status != 200):
-                
+                sleep(.3)
                 #Grab the game info XML
                 gr = requests.get("https://boardgamegeek.com/xmlapi2/thing?id=" + obj_id + "&stats=1")
                 status = gr.status_code
