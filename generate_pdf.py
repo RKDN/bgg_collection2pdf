@@ -151,7 +151,7 @@ def get_links(elem, name):
 
 def open_template(config):
     if(config.card_mode):
-        with open(config.template_card, 'r') as file:
+        with open(config.card_template, 'r') as file:
             return file.read()
     else:    
         with open(config.template, 'r') as file:
