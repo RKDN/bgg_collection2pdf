@@ -42,13 +42,14 @@ parser.add_argument('-i','--index', dest='index', action='store_true', help='Ena
 parser.add_argument('--clean_images', dest='clean_images', action='store_true', help='Clear out local images cache. (default=Off)')
 parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local xml cache. (default=Off)')
 parser.add_argument('-o','--own',dest='own', action='store_true', help='Enables pulling only games set to own on BGG. (default=Off)')
+
 args = parser.parse_args()
-
-
 
 if(args.clean_images):
     for f in os.listdir('./Images'):
         if(exists(os.path.join('./Images', f))):
+            if(f == 'icon_players.png' or f == 'icon_duration.png'):
+                continue
             os.remove(os.path.join('./Images', f))
     sys.exit()
 
@@ -59,6 +60,7 @@ if(args.clean_xml):
         if(os.path.join('./game_xml', f)):
             os.remove(os.path.join('./game_xml', f))
     sys.exit()
+
 
 user_name = args.username
 validUserName = False
@@ -72,6 +74,7 @@ while not validUserName:
     else:
         logging.warning(f'UserName: {user_name} was not valid')
         user_name = input("Enter your BGG UserName: ")
+
 card_mode            = args.cardmode or False
 index                = args.index    or False
 
@@ -336,65 +339,48 @@ for item in items:
                     dict_category[category] = []
                 dict_category[category].append(game_info)
 
-#If someone knows how to force page breaks in a more sane way please make this not hurt my head.
+def break_if_required(line_text, write_header):
+    if(i % break_point == 0):
+        file.write("</ul>\n")
+        file.write('<p style="page-break-after: always;"></p>\n')
+        file.write("<ul>\n")
+        if(write_header):
+            file.write("<br><li><b>" + line_text + "</b></li>\n")
+
 if(index):
     i = 1
-    new_page_count = 320
+    break_point = 250
     with open('output.html', 'a') as file:
-        file.write('<p style="page-break-after: always;">\n')
-        file.write('<div style="padding:40px"></div>')
+        file.write('<p style="page-break-after: always;"></p>\n')
+        file.write("<ul>\n")
         for count in range(1,10):
-            file.write("<h3>" + str(count) + " player games:" + "</h3>\n")
-            file.write("<ul>\n")
+            file.write("<br><li><b>" + str(count) + " player games:" + "</b></li>\n")
+            i += 1
+            break_if_required(str(count) + " player games:", False)
             for game in dict_player_count[count]:
-                if(i % new_page_count == 0):
-                    file.write("</ul>\n")
-                    file.write('</p>\n')
-                    file.write('<p style="page-break-after: always;">\n')
-                    file.write('<div style="padding:40px"></div>')
-                    file.write("<h3>" + str(count) + " player games:" + "</h3>\n")
-                    file.write("<ul>\n")
                 file.write("<li>" + game.name + "</li>\n")
                 i += 1
-            file.write("</ul>\n")
-            if(len(dict_player_count[count]) < 33 or i % new_page_count < 33):
-                file.write('<div style="padding:'+ str(55 - min(len(dict_player_count[count]), i % new_page_count)) +'px"></div>')
-                i = min(new_page_count, (i % new_page_count + (33 - min(len(dict_player_count[count]), i % new_page_count)) ))
-            file.write('</p>\n')
+                break_if_required(str(count) + " player games:", True)
+        file.write("</ul>\n")
 
     i = 1
-    new_ul_space   = 10
-    new_page_count = 300
+    break_point = 250
     with open('output.html', 'a') as file:
-        file.write('<p style="page-break-after: always;">\n')
-        file.write('<div style="padding:40px"></div>')
+        file.write('<p style="page-break-after: always;"></p>\n')
+        file.write('<ul>\n')
         for cat in sorted(dict_category):
-            i = min(new_page_count, i % new_page_count + new_ul_space)
-            if(i % new_page_count == 0):
-                file.write("</ul>\n")
-                file.write('</p>\n')
-                file.write('<p style="page-break-after: always;">\n')
-                file.write('<div style="padding:40px"></div>')
-                i += 1
-            file.write('<ul style="margin-left: 75px">\n')
-            file.write("<b>" + str(cat) + " games:" + "</b>\n")
+            file.write("<br><li><b>" + str(cat) + " games:" + "</b></li>\n")
+            i += 1
+            break_if_required(str(cat) + " games:", False)
             for game in dict_category[cat]:
-                if(i % new_page_count == 0):
-                    file.write("</ul>\n")
-                    file.write('</p>\n')
-                    file.write('<p style="page-break-after: always;">\n')
-                    file.write('<div style="padding:40px"></div>')
-                    file.write('<ul style="margin-left: 75px">\n')
-                    file.write("<b>" + str(cat) + " games:" + "</b>\n")
                 file.write("<li>" + game.name + "</li>\n")
                 i += 1
-            file.write("</ul>\n")
-            file.write('</p>\n')
+                break_if_required(str(cat) + " games:", True)
+        file.write("</ul>\n")
 
 #Write the html trailer.
 with open('output.html', 'a') as file:
         file.write("</body></html>")
-
 
 
 
