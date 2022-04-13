@@ -25,7 +25,9 @@ args = parser.parse_args()
 
 if(args.clean_images):
     for f in os.listdir('./Images'):
-        if(exists(os.path.join('./Images', f) and f != 'icon_players.png' and f != 'icon_duration.png')):
+        if(exists(os.path.join('./Images', f))):
+            if(f == 'icon_players.png' or f == 'icon_duration.png'):
+                continue
             os.remove(os.path.join('./Images', f))
     sys.exit()
 
