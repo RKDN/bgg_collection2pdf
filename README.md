@@ -30,7 +30,6 @@ Print with no margins on US Letter paper. Make sure you enable "Print Background
 
 ## Help
 
-Any advise for common problems or issues.
 ```
   -h, --help            show this help message and exit
   -u USERNAME, --username USERNAME
