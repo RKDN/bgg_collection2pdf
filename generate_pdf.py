@@ -9,8 +9,10 @@ from time import sleep
 from xml.etree import ElementTree
 import logging
 from urllib.parse import urlencode, quote
+from datetime import datetime
 
-######### Begin Classes ######### 
+starttime = datetime.now()
+######### Begin Classes #########
 
 class config:
     def __init__(self, args):
@@ -47,30 +49,30 @@ class collection_information:
 
 class game_information:
     def __init__(self, items, config, collection_info):
-        self.image                  = get_prop_text(items[0], 'image')
-        self.name                   = get_prop_value(items[0], 'name')
+        self.image                  = get_prop_text(items, 'image')
+        self.name                   = get_prop_value(items, 'name')
         self.obj_id                 = collection_info.obj_id
         self.my_rating              = collection_info.my_rating
         self.avg_rating             = collection_info.avg_rating
-        self.minplayers             = str(get_prop_value(items[0], 'minplayers') or '')
-        self.maxplayers             = str(get_prop_value(items[0], 'maxplayers') or '')
-        self.published              = get_prop_value(items[0], 'yearpublished')
-        self.publisher              = get_value_in_list(get_links(items[0], 'boardgamepublisher'), 0)
-        self.designer               = get_value_in_list(get_links(items[0], 'boardgamedesigner'), 0)
-        self.artist1                = get_value_in_list(get_links(items[0], 'boardgameartist'), 0)
-        self.artist2                = get_value_in_list(get_links(items[0], 'boardgameartist'), 1)
-        self.category1              = get_value_in_list(get_links(items[0], 'boardgamecategory'), 0)
-        self.category2              = get_value_in_list(get_links(items[0], 'boardgamecategory'), 1)
-        self.mechanic1              = get_value_in_list(get_links(items[0], 'boardgamemechanic'), 0)
-        self.mechanic2              = get_value_in_list(get_links(items[0], 'boardgamemechanic'), 1)
-        self.mechanic3              = get_value_in_list(get_links(items[0], 'boardgamemechanic'), 2)
-        self.mechanic4              = get_value_in_list(get_links(items[0], 'boardgamemechanic'), 3)
-        self.mintime                = str(get_prop_value(items[0], 'minplaytime') or '')
-        self.maxtime                = str(get_prop_value(items[0], 'maxplaytime') or '')
-        self.avg_weight             = items[0].find('statistics').find('ratings').find('averageweight').attrib['value']
+        self.minplayers             = str(get_prop_value(items, 'minplayers') or '')
+        self.maxplayers             = str(get_prop_value(items, 'maxplayers') or '')
+        self.published              = get_prop_value(items, 'yearpublished')
+        self.publisher              = get_value_in_list(get_links(items, 'boardgamepublisher'), 0)
+        self.designer               = get_value_in_list(get_links(items, 'boardgamedesigner'), 0)
+        self.artist1                = get_value_in_list(get_links(items, 'boardgameartist'), 0)
+        self.artist2                = get_value_in_list(get_links(items, 'boardgameartist'), 1)
+        self.category1              = get_value_in_list(get_links(items, 'boardgamecategory'), 0)
+        self.category2              = get_value_in_list(get_links(items, 'boardgamecategory'), 1)
+        self.mechanic1              = get_value_in_list(get_links(items, 'boardgamemechanic'), 0)
+        self.mechanic2              = get_value_in_list(get_links(items, 'boardgamemechanic'), 1)
+        self.mechanic3              = get_value_in_list(get_links(items, 'boardgamemechanic'), 2)
+        self.mechanic4              = get_value_in_list(get_links(items, 'boardgamemechanic'), 3)
+        self.mintime                = str(get_prop_value(items, 'minplaytime') or '')
+        self.maxtime                = str(get_prop_value(items, 'maxplaytime') or '')
+        self.avg_weight             = items.find('statistics').find('ratings').find('averageweight').attrib['value']
         self.three_mechanics_length = len((self.mechanic1 or "") + (self.mechanic2 or "") + (self.mechanic3 or ""))
         self.four_mechanics_length  = len((self.mechanic1 or "") + (self.mechanic2 or "") + (self.mechanic3 or "") + (self.mechanic4 or ""))
-        self.description            = textwrap.shorten(get_prop_text(items[0], 'description') or "", width=get_description_length(config), placeholder='...')
+        self.description            = textwrap.shorten(get_prop_text(items, 'description') or "", width=get_description_length(config), placeholder='...')
 
 ######### End Classes ######### 
 
@@ -273,6 +275,31 @@ def read_collection(config):
             file.write(collection_response.text) 
             return ElementTree.fromstring(collection_response.content)
 
+def download_and_split_collection_object_info(config, newids):
+    newgamexmls = bgg_getter('thing', {'id': ','.join(newids), 'stats': 1}, config)
+    for item in ElementTree.fromstring(newgamexmls.content):
+        game_xml_path = os.path.join(config.xml_path, item.attrib['id'] + '.xml')
+        with open(game_xml_path, 'w', encoding='utf-8') as file:
+            logging.info(f'Writing to {game_xml_path}')
+            file.write(ElementTree.tostring(item, encoding='unicode'))
+
+def find_and_download_new_collection_object_info(config, collection):
+    newids = set()
+    for item in collection:
+        collection_info = collection_information(item, config)
+        if not (os.path.exists(collection_info.game_xml)):
+            newids.add(collection_info.obj_id)
+            logging.debug(f'Adding ID: {collection_info.obj_id} for download')
+        else:
+            logging.debug(f'Skipping ID: {collection_info.obj_id} for download')
+        if len(newids)>100:
+            logging.debug(f'Collected 100 ids - passing for download')
+            download_and_split_collection_object_info(config, newids)
+            newids = set()
+    if newids:
+        logging.debug(f'Downloading remaining new ids')
+        download_and_split_collection_object_info(config, newids)
+
 def gather_index_info(config, gameinfo):
     for count in range(int(gameinfo.minplayers), int(gameinfo.maxplayers)):
         if(count not in config.dict_player_count):
@@ -349,6 +376,9 @@ write_output_header(config)
 #Read in the collection xml file.
 items = read_collection(config)
 
+find_and_download_new_collection_object_info(config, items)
+
+
 #Parsing user collection XML
 for item in items:
     collection_info = collection_information(item, config)
@@ -358,8 +388,9 @@ for item in items:
         #Check to see if the XML already exists. If it does, don't re-request it.
         if(os.path.exists(collection_info.game_xml)):
             with open(collection_info.game_xml, 'r', encoding="utf-8") as file:
-                items = ElementTree.fromstring(file.read())
+                thisgameitems = ElementTree.fromstring(file.read())
         else:
+            logging.error('game not found')
             #Pull the game info XML
             game_info_response = bgg_getter('thing', {'id': collection_info.obj_id, 'stats': 1} , config)   
                              
@@ -367,11 +398,11 @@ for item in items:
             with open(collection_info.game_xml, 'w', encoding="utf-8") as file:
                 logging.info("Writing: " + collection_info.game_name + " to " + collection_info.game_xml)
                 file.write(game_info_response.text)
-                items = ElementTree.fromstring(game_info_response.content)
+                thisgameitems = ElementTree.fromstring(game_info_response.content)
 
         #Now that we have all of the information we need, create the HTML page.
-        if(items[0].attrib['type'] == "boardgame"):
-            game_info = game_information(items, config, collection_info)
+        if(thisgameitems.attrib['type'] == "boardgame"):
+            game_info = game_information(thisgameitems, config, collection_info)
             download_image(config, game_info)          
             template_to_output_entry(config, game_info)
             gather_index_info(config, game_info)
@@ -382,7 +413,10 @@ write_index(config)
 #Write the trailer.
 write_trailer_to_output(config)
 
-
+endtime = datetime.now()
+totaltime = endtime - starttime
+logging.info(f'command: {sys.argv}')
+logging.info(f'total time: {totaltime}')
 
 
 
