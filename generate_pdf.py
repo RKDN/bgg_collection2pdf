@@ -28,10 +28,10 @@ class config:
         self.template                = "./template.html"
         self.card_template           = "./template_card.html"
 
-        self.output                  = int(args.output) if len(args.output) > 0 else"./output.html"
-        self.collection_xml          = int(args.collection_xml) if len(args.collection_xml) > 0 else"./collection.xml"
-        self.images_path             = int(args.images_path) if len(args.images_path) > 0 else"./Images"
-        self.xml_path                = int(args.xml_path) if len(args.xml_path) > 0 else"./game_xml"
+        self.output                  = args.output if len(args.output) > 0 else"./output.html"
+        self.collection_xml          = args.collection_xml if len(args.collection_xml) > 0 else"./collection.xml"
+        self.images_path             = args.images_path if len(args.images_path) > 0 else"./Images"
+        self.xml_path                = args.xml_path if len(args.xml_path) > 0 else"./game_xml"
         
         self.sleep_time              = int(args.minsleep) if len(args.minsleep) > 0 else 10
         self.sleep_time_max          = int(args.maxsleep) if len(args.maxsleep) > 0 else 120
