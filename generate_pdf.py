@@ -3,27 +3,75 @@ import textwrap
 import shutil
 import math
 import argparse
+import os
+import sys
 from time import sleep
 from os.path import exists
-from os import environ
 from xml.etree import ElementTree
 import logging
+from urllib.parse import urlencode, quote
 
+bgg =  'https://boardgamegeek.com/xmlapi2'
 sleep_time           = 10
 successful_responses = 0
-LOGLEVEL = environ.get('LOGLEVEL', 'INFO').upper()
+LOGLEVEL = os.environ.get('LOGLEVEL', 'INFO').upper()
 logging.basicConfig(level=LOGLEVEL)
+
+#command is an api command from BGG (user, collection, etc)
+#params is a dictionary with parameter/value pairs for the command
+def bggGetter (command, params):
+    status = 0
+    a = ''
+    while not status == 200:
+        url = '{}/{}?{}'.format(bgg,
+                                quote(command),
+                                urlencode(params),
+                                )
+        logging.debug(url)
+        a = requests.get(url)
+        status = a.status_code
+        if not status == 200:
+            sleep(sleep_time)
+    return a
+
 
 parser = argparse.ArgumentParser(description='Create an html/pdf output of board game collection based on UserName from boardgamegeek.com.')
 parser.add_argument('-u','--username', dest='username', action='store', default='', help='User to pull BGG collection data from. (Required)')
 parser.add_argument('-c','--cardmode', dest='cardmode', action='store_true', help='Create cards instead of a catalog. (default=Off)')
 parser.add_argument('-i','--index', dest='index', action='store_true', help='Enables creating an index. (default=Off)')
+parser.add_argument('--clean_images', dest='clean_images', action='store_true', help='Clear out local images cache. (default=Off)')
+parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local xml cache. (default=Off)')
+parser.add_argument('-o','--own',dest='own', action='store_true', help='Enables pulling only games set to own on BGG. (default=Off)')
 args = parser.parse_args()
 
-if(args.username == ''):
-    user_name            = input("Enter your BGG UserName: ")
-else:
-    user_name = args.username
+
+
+if(args.clean_images):
+    for f in os.listdir('./Images'):
+        if(exists(os.path.join('./Images', f))):
+            os.remove(os.path.join('./Images', f))
+    sys.exit()
+
+if(args.clean_xml):
+    if(exists('./collection.xml')):
+        os.remove('./collection.xml')
+    for f in os.listdir('./game_xml'):
+        if(os.path.join('./game_xml', f)):
+            os.remove(os.path.join('./game_xml', f))
+    sys.exit()
+
+user_name = args.username
+validUserName = False
+
+while not validUserName:
+    thisdata = bggGetter('user', {'name': user_name})
+    root = ElementTree.fromstring(thisdata.content)
+    if root.attrib['id']:
+        validUserName = True
+        logging.info(f'UserName: {user_name} is valid')
+    else:
+        logging.warning(f'UserName: {user_name} was not valid')
+        user_name = input("Enter your BGG UserName: ")
 card_mode            = args.cardmode or False
 index                = args.index    or False
 
@@ -35,6 +83,7 @@ dict_player_count    = {}
 dict_category        = {}
 
 ######### Begin Functions ######### 
+
 
 def get_value(item):
     return item.attrib['value']
@@ -190,13 +239,18 @@ if(exists('collection.xml')):
 else:
     logging.warning('Reading collection from bgg')
     status = 0
-    while(status != 200):
-        ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
-        status = ur.status_code
-
-        if(status != 200):
-            logging.warning('Waiting for BGG XML. Sleeping 20 seconds.')
-            sleep(20)
+    params = {'username': user_name, 'stats': 1}
+    if args.own:
+        params['own'] = 1
+    ur = bggGetter('collection',params)
+    # while(status != 200):
+    #     ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
+    #     status = ur.status_code
+    #
+    #     if(status != 200):
+    #
+    #         logging.warning('Waiting for BGG XML. Sleeping 20 seconds.')
+    #         sleep(20)
 
     with open('collection.xml', 'w', encoding="utf-8") as file:
         file.write(ur.text) 
@@ -234,7 +288,7 @@ for item in items:
             
             #While <error> is in the reponse, keep trying, but with a delay.
             while(status != 200):
-                
+                sleep(.3)
                 #Grab the game info XML
                 gr = requests.get("https://boardgamegeek.com/xmlapi2/thing?id=" + obj_id + "&stats=1")
                 status = gr.status_code
