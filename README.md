@@ -6,14 +6,11 @@ Create a pdf file of your game lists on Board Game Geek
 
 This is a python script that will generate a HTML  (PDF as an extra step) catalog for your board game collection. Currently the output can be in the form of pages or card images of the games in your collection.
 
-## Getting Started
-
 ### Dependencies
 
 * bgg account
 * python3 and requests library
 ** use pip install requests
-
 
 ### Installing
 
@@ -23,15 +20,13 @@ This is a python script that will generate a HTML  (PDF as an extra step) catalo
 
 * How to run the program
 ```
-generate_pdf.py
-Enter your BGG UserName: migio
-Card Mode? : (y/N)y
+python generate_pdf.py --username USER
 ```
 Wait for the script to run. It will take a bit to download all of the information needed from BGG.
 
 Open the output.html page that was generated in Firefox. Other browsers may not format the page correctly. Your mileage may vary.
 
-Print with no margins on US Letter paper. Make sure you enable "Print Backgrounds." You may need to adjust the scale when printing card mode output.
+Print with no margins on US Letter paper. Make sure you enable "Print Backgrounds."
 
 ## Help
 
@@ -44,6 +39,16 @@ Any advise for common problems or issues.
   -i, --index           Enables creating an index. (default=Off)
   --clean_images        Clear out local images cache. (default=Off)
   --clean_xml           Clear out local xml cache. (default=Off)
+  -o, --own             Enables pulling only games set to own on BGG. (default=Off)
+  --minsleep MINSLEEP   Minimum sleep duration on XML error. (Default=10)
+  --maxsleep MAXSLEEP   Maximum sleep duration on XML error. (Default=120)
+  --output OUTPUT       Output html file. (Default="./output.html")
+  --images_path IMAGES_PATH
+                        Images path. (Default="./Images")
+  --xml_path XML_PATH   Game XML Path. (Default="./game_xml")
+  --collection_xml COLLECTION_XML
+                        Output collection XML file.(Default="./collection.xml")
+
 ```
 
 ## Authors
@@ -52,18 +57,12 @@ Contributors names and contact info
 
 * Daniel Shourd
 ** [on BGG](https://boardgamegeek.com/user/RKDN)
-** [her on github](https://github.com/RKDN)
+** [here on github](https://github.com/RKDN)
 
-## Version History
-
-* 0.2
-    * Various bug fixes and optimizations
-* 0.1
-    * Initial Release
 
 ## License
 
-This project is licensed under the [NAME HERE] License - see the LICENSE.md file for details
+This project is licensed under the MIT License - see the LICENSE.md file for details
 
 ## Acknowledgments
 
