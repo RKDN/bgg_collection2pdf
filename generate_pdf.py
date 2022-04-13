@@ -205,6 +205,7 @@ def download_image(config, game_info):
         #Download the image to the local cache.
         res = requests.get(game_info.image, stream = True)
         if res.status_code == 200:
+            logging.info("Writing: " + collection_info.game_name + " boxart to " + os.path.join(config.images_path, game_info.obj_id + ".jpg"))
             with open(os.path.join(config.images_path, game_info.obj_id + ".jpg"), 'wb') as f:
                 shutil.copyfileobj(res.raw, f)
 
@@ -300,13 +301,13 @@ def find_and_download_new_collection_object_info(config, collection):
         logging.debug(f'Downloading remaining new ids')
         download_and_split_collection_object_info(config, newids)
 
-def gather_index_info(config, gameinfo):
+def gather_index_info(config, gameinfo, item):
     for count in range(int(gameinfo.minplayers), int(gameinfo.maxplayers)):
         if(count not in config.dict_player_count):
             config.dict_player_count[count] = []
         config.dict_player_count[count].append(gameinfo)
 
-    for x in get_links(items[0], 'boardgamecategory'):
+    for x in get_links(item, 'boardgamecategory'):
         category = x.attrib['value']
         if(category not in config.dict_category):
             config.dict_category[category] = []
@@ -346,7 +347,7 @@ def write_index(config):
                     break_if_required(file, str(cat) + " games:", i % break_point == 0)
             file.write("</ul>\n")
 
-def write_trailer_to_output(config):
+def write_output_trailer(config):
     #Write the html trailer.
     with open(config.output, 'a') as file:
             file.write("</body></html>")
@@ -378,7 +379,6 @@ items = read_collection(config)
 
 find_and_download_new_collection_object_info(config, items)
 
-
 #Parsing user collection XML
 for item in items:
     collection_info = collection_information(item, config)
@@ -405,13 +405,13 @@ for item in items:
             game_info = game_information(thisgameitems, config, collection_info)
             download_image(config, game_info)          
             template_to_output_entry(config, game_info)
-            gather_index_info(config, game_info)
+            gather_index_info(config, game_info, item)
 
 #Write the index.
 write_index(config)
 
 #Write the trailer.
-write_trailer_to_output(config)
+write_output_trailer(config)
 
 endtime = datetime.now()
 totaltime = endtime - starttime
