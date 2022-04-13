@@ -220,6 +220,14 @@ def download_image(obj_id):
             with open('./Images/' + obj_id + ".jpg", 'wb') as f:
                 shutil.copyfileobj(res.raw, f)
 
+def break_if_required(line_text, write_header):
+    if(i % break_point == 0):
+        file.write("</ul>\n")
+        file.write('<p style="page-break-after: always;"></p>\n')
+        file.write("<ul>\n")
+        if(write_header):
+            file.write("<br><li><b>" + line_text + "</b></li>\n")
+
 ######### End Functions ######### 
 
 logging.info('starting');
@@ -246,15 +254,6 @@ else:
     if args.own:
         params['own'] = 1
     ur = bggGetter('collection',params)
-    # while(status != 200):
-    #     ur = requests.get("https://boardgamegeek.com/xmlapi2/collection?username=" + user_name + "&stats=1")
-    #     status = ur.status_code
-    #
-    #     if(status != 200):
-    #
-    #         logging.warning('Waiting for BGG XML. Sleeping 20 seconds.')
-    #         sleep(20)
-
     with open('collection.xml', 'w', encoding="utf-8") as file:
         file.write(ur.text) 
         items = ElementTree.fromstring(ur.content)
@@ -293,7 +292,8 @@ for item in items:
             while(status != 200):
                 sleep(.3)
                 #Grab the game info XML
-                gr = requests.get("https://boardgamegeek.com/xmlapi2/thing?id=" + obj_id + "&stats=1")
+                params = {'id': obj_id, 'stats': 1}
+                gr = bggGetter('thing',params)
                 status = gr.status_code
                 
                 #This is all code related to delaying attempts when we get a timeout.
@@ -338,14 +338,6 @@ for item in items:
                 if(category not in dict_category):
                     dict_category[category] = []
                 dict_category[category].append(game_info)
-
-def break_if_required(line_text, write_header):
-    if(i % break_point == 0):
-        file.write("</ul>\n")
-        file.write('<p style="page-break-after: always;"></p>\n')
-        file.write("<ul>\n")
-        if(write_header):
-            file.write("<br><li><b>" + line_text + "</b></li>\n")
 
 if(index):
     i = 1
