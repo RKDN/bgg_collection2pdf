@@ -1,6 +1,9 @@
+@import url('https://fonts.googleapis.com/css?family=Noto+Sans');
+@import url('https://fonts.googleapis.com/css?family=David+Libre');
+
 .background {
-    filter: blur(20px);
-    -webkit-filter: blur(20px);
+    filter: blur(2px);
+    -webkit-filter: blur(2px);
     position:absolute;
     top:0px;
     left:0px;
@@ -8,74 +11,98 @@
     height: 100%;
     width: 100%;
     object-fit: cover;
-    opacity: 0.3;
+    opacity: 0.4;
     z-index: -1;
+    border-radius:5px;;
 }
 
 .full_div {
-    margin:1%;
-    padding:2%;
+    margin:10px;
+    padding:10px;
     display:inline-block;
-    border-radius:15px;
-    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
+    border-radius:5px;;
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
     position:relative;
     backdrop-filter: blur(5px);
     border-style: solid;
     border-color: rgba(170,170,170,.3);
     border-width: 1px;
-    width:93.5%;
+    width:93%;
 } 
 
 .left_column {
     float:left;
-    padding-bottom:5px;
-    padding-top:5px;
-    padding-left:1%;
-    padding-right:1%;
-    width:22.3%;
-    height: 24%;
+   
     display: flex;
-    justify-content: center;
-    align-items: center;
+    align-items:center;
+
+    margin-top:5px;
+    padding:5px;
+
+    width:21%;
+    height:24%;
+    align-content: center;
     text-align:center;
+    vertical-align: center;
 }
 
 .box_art {
     max-height: 100%;
     max-width: 100%;
+    border-radius:10px;;
     border-style: solid;
-    border-width: 2px;
-    border-color: #cfcfcf;
-    border-radius: 15px;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 }
 
 .description {
-    padding-left: 2%;
-    padding-right:2%;
-    padding-bottom:12px;
+    padding: 10px;
+    margin:5px;
+    margin-left:10px;
     float:left;
-    width:44.2%;
-    font-size:54%;
-    height:24.5%;
+    width:46%;
+    font-size:1vh;
+    line-height:1.3vh;
+    height:23%;
+    background-color:rgba(255, 255, 255, 0.55);
+    border-radius:5px;;
+    font-family: 'David Libre', serif;
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
+    text-align:left;
 }
 
 .right_column {
-    background-color:rgba(150,150,150,.3);
-    border-radius:15px;
-    float:left;
-    padding-bottom:5px;
-    padding-top:5px;
-    padding-left:1%;
-    padding-right:1%;
-    width:24.2%;
-    margin-top:5px;
-    font-size:58%;
+    float:right;
     display: flex;
+
+    background-color:rgba(255, 255, 255, 0.55);
+    border-radius:5px;;
+    
+    width:24%;
+    height:18%;
+    
+    margin-top:5px;
+    margin-left:5px;
+
+    font-size:1.2vh;
+    line-height:1.4vh;
+    font-family: 'David Libre', serif;
+    
     justify-content: center;
     align-items: center;
     text-align:center;
-    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
-    height:19%;
+
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    
 }
 
 .info_summary {
@@ -84,59 +111,108 @@
 
 .bottom_row {
     clear:both;
-    margin:5px;
     width:100%;
-    font-size:78%;
+    font-size:1.2vh;
+    font-family: 'David Libre', serif;
 }
 
 .bottom_row_entry_left {
-    width:auto;
+    width:68.5%;
     float:left;
+    padding:5px;
+    padding-right:15px;
+    padding-left:15px;
+    border-radius:5px;
+    background-color:rgba(255, 255, 255, 0.55);
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
 }
 
 .bottom_row_entry_right {
-    width:auto;
-    text-align: right;
+    width:22.5%;
+    text-align: center;
     float:right;
-    margin-right:2%;
+    border-radius:5px;;
+    padding:5px;
+    background-color:rgba(255, 255, 255, 0.55);
+    
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
+}
+
+hr {
+    color:rgba(255, 255, 255, 0.6);
 }
 
 .info_icon {
-    margin-top:5px;
     padding-right:4px;
-    height:12px;
+    height:9px;
 }
 
 .weight_info {
-    background-color:rgba(150,150,150,.3);
-    width: 11%;
-    height:9%;
-    position:absolute;
-    top:72%;
-    right:3.2%;
-    border-radius:10px;
-    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
-    text-align:center;
+    float:right;
+
     display: flex;
     align-items:center;
     justify-content:center;
-    font-size:72%;
+    text-align:center;
+
+    width: 24%;
+    height:2.5%;
+
+    margin-top:10px;
+    margin-left:5px;
+
+    border-radius:5px;;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    
+    background-color:rgba(255, 255, 255, 0.55);
+
+    font-size:1.2vh;
+    font-family: 'David Libre', serif;
+    
 }
 
 .rating_info {
-    background-color:rgba(150,150,150,.3);
-    width: 11%;
-    height:9%;
-    position:absolute;
-    top:72%;
-    right:17.4%;
-    border-radius:10px;
-    box-shadow: 5px 5px 5px rgba(170,170,170,.3);
-    text-align:center;
+    float:right;
+
     display: flex;
     align-items:center;
     justify-content:center;
-    font-size:72%;
+    text-align:center;
+
+    width: 24%;
+    height:2.5%;
+
+    margin-top:10px;
+    margin-left:5px;
+
+    border-radius:5px;;
+    border-style: solid;
+    border-color: rgba(170,170,170,.3);
+    border-width: 1px;
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    
+    background-color:rgba(255, 255, 255, 0.55);
+
+    font-size:1.2vh;
+    font-family: 'David Libre', serif;
 }
 
 ul {

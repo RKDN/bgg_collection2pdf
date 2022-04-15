@@ -167,9 +167,9 @@ def get_mechanics_list_max_length(config):
 
 def get_description_length(config):
     if(config.card_mode):
-        return 550
+        return 450
     else:
-        return 1100
+        return 1000
 
 def template_to_output_entry(config, game_info):
     mechanics_list_max_length = get_mechanics_list_max_length(config)
