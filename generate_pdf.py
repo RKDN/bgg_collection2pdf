@@ -363,8 +363,11 @@ config = config(args)
 #Set loging level.
 logging.basicConfig(level=config.LOGLEVEL)
 
-#Cleanup if arg set.
+#Cleanup if args set.
 clean_up(config)
+
+# Create the XML path if it does not exist.
+os.makedirs(config.xml_path, exist_ok=True)
 
 #Validate the username
 config.user_name = validate_username(config.user_name)
