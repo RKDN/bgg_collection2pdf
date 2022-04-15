@@ -38,10 +38,10 @@
     display: flex;
     align-items:center;
 
-    margin-top:5px;
-    padding:5px;
+    margin-right:5px;
+    margin-bottom:5px;
 
-    width:21%;
+    width:18%;
     height:24%;
     align-content: center;
     text-align:center;
@@ -55,17 +55,21 @@
     border-style: solid;
     border-color: rgba(170,170,170,.3);
     border-width: 1px;
+    box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -webkit-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
+    -moz-box-shadow: 9px 9px 17px -1px rgba(0,0,0,0.32);
 }
 
 .description {
-    padding: 10px;
-    margin:5px;
-    margin-left:10px;
+    padding-left: 10px;
+    padding-right: 10px;
+    margin-left:5px;
+    margin-bottom:5px;
     float:left;
-    width:46%;
-    font-size:.9vh;
+    width:50.5%;
+    font-size:1.1vh;
     line-height:1.3vh;
-    height:23%;
+    height:24%;
     background-color:rgba(255, 255, 255, 0.55);
     border-radius:5px;;
     font-family: 'David Libre', serif;
@@ -85,11 +89,8 @@
     background-color:rgba(255, 255, 255, 0.55);
     border-radius:5px;;
     
-    width:24%;
+    width:25%;
     height:18%;
-    
-    margin-top:5px;
-    margin-left:5px;
 
     font-size:1.2vh;
     line-height:1.4vh;
@@ -133,7 +134,7 @@
 }
 
 .bottom_row_entry_right {
-    width:22.5%;
+    width:23.5%;
     text-align: center;
     float:right;
     border-radius:5px;;
@@ -153,6 +154,10 @@ hr {
     color:rgba(255, 255, 255, 0.6);
 }
 
+h2 {
+    margin-bottom:1px;
+}
+
 .info_icon {
     padding-right:4px;
     height:9px;
@@ -166,11 +171,10 @@ hr {
     justify-content:center;
     text-align:center;
 
-    width: 24%;
-    height:2.5%;
+    width: 25%;
+    height:2.3%;
 
-    margin-top:10px;
-    margin-left:5px;
+    margin-top:5px;
 
     border-radius:5px;;
     border-style: solid;
@@ -195,11 +199,10 @@ hr {
     justify-content:center;
     text-align:center;
 
-    width: 24%;
-    height:2.5%;
+    width: 25%;
+    height:2.3%;
 
-    margin-top:10px;
-    margin-left:5px;
+    margin-top:7px;
 
     border-radius:5px;;
     border-style: solid;

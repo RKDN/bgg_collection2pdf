@@ -414,7 +414,7 @@ for item in items:
             game_info = game_information(thisgameitems, config, collection_info)
             download_image(config, game_info)
             template_to_output_entry(config, game_info)
-            gather_index_info(config, game_info, item)
+            gather_index_info(config, game_info, thisgameitems)
 
 #Write the index.
 write_index(config)
