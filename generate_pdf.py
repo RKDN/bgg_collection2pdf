@@ -10,6 +10,7 @@ from xml.etree import ElementTree
 import logging
 from urllib.parse import urlencode, quote
 from datetime import datetime
+import contextlib
 
 starttime = datetime.now()
 ######### Begin Classes #########
@@ -20,8 +21,8 @@ class config:
         self.bgg                     = 'https://boardgamegeek.com/xmlapi2'
         self.successful_responses    = 0
         self.dict_player_count       = {}
-        self.dict_category           = {}        
-        
+        self.dict_category           = {}
+
         self.user_name               = args.username
         self.card_mode               = args.cardmode or False
         self.index                   = args.index    or False
@@ -34,7 +35,7 @@ class config:
         self.collection_xml          = args.collection_xml if len(args.collection_xml) > 0 else"./collection.xml"
         self.images_path             = args.images_path if len(args.images_path) > 0 else"./Images"
         self.xml_path                = args.xml_path if len(args.xml_path) > 0 else"./game_xml"
-        
+
         self.sleep_time              = int(args.minsleep) if len(args.minsleep) > 0 else 10
         self.sleep_time_max          = int(args.maxsleep) if len(args.maxsleep) > 0 else 120
 
@@ -74,9 +75,9 @@ class game_information:
         self.four_mechanics_length  = len((self.mechanic1 or "") + (self.mechanic2 or "") + (self.mechanic3 or "") + (self.mechanic4 or ""))
         self.description            = textwrap.shorten(get_prop_text(items, 'description') or "", width=get_description_length(config), placeholder='...')
 
-######### End Classes ######### 
+######### End Classes #########
 
-######### Begin Functions ######### 
+######### Begin Functions #########
 
 #command is an api command from BGG (user, collection, etc)
 #params is a dictionary with parameter/value pairs for the command
@@ -94,6 +95,7 @@ def bgg_getter (command, params, config):
         status = a.status_code
         if(status != 200):
             error = ElementTree.fromstring(a.content)
+            print(error);
             logging.info("Sleeping " + str(config.sleep_time) + " Seconds: " + (error.find('message').text if error != None else str(status)))
             sleep(config.sleep_time)
             config.sleep_time *= 2
@@ -113,6 +115,7 @@ def parse_arguments():
     parser.add_argument('-i','--index', dest='index', action='store_true', help='Enables creating an index. (default=Off)')
     parser.add_argument('--clean_images', dest='clean_images', action='store_true', help='Clear out local images cache. (default=Off)')
     parser.add_argument('--clean_xml', dest='clean_xml', action='store_true', help='Clear out local xml cache. (default=Off)')
+    parser.add_argument('--clean_all', dest='clean_all', action='store_true', help='Clear out Images, XML, and all other generated files (default=Off)')
     parser.add_argument('-o','--own',dest='own', action='store_true', help='Enables pulling only games set to own on BGG. (default=Off)')
     parser.add_argument('--minsleep', dest='minsleep', action='store', default='', help='Minimum sleep duration on XML error. (Default=10)')
     parser.add_argument('--maxsleep', dest='maxsleep', action='store', default='', help='Maximum sleep duration on XML error. (Default=120)')
@@ -120,7 +123,6 @@ def parse_arguments():
     parser.add_argument('--images_path', dest='images_path', action='store', default='', help='Images path. (Default="./Images")')
     parser.add_argument('--xml_path', dest='xml_path', action='store', default='', help='Game XML Path. (Default="./game_xml")')
     parser.add_argument('--collection_xml', dest='collection_xml', action='store', default='', help='Output collection XML file.(Default="./collection.xml")')
-
     return parser.parse_args()
 
 def get_value(item):
@@ -155,7 +157,7 @@ def open_template(config):
     if(config.card_mode):
         with open(config.card_template, 'r') as file:
             return file.read()
-    else:    
+    else:
         with open(config.template, 'r') as file:
             return file.read()
 
@@ -190,7 +192,7 @@ def template_to_output_entry(config, game_info):
     template = template.replace('{{Cat1}}'          , " , " + (game_info.mechanic2              or ""))
     template = template.replace('{{Cat2}}'          , " , " + (game_info.mechanic3              or "") if (mechanics_list_max_length >= game_info.three_mechanics_length) else "")
     template = template.replace('{{Cat3}}'          , " , " + (game_info.mechanic4              or "") if (mechanics_list_max_length >= game_info.four_mechanics_length) else "")
-    template = template.replace('{{p}}'             , game_info.minplayers + " - " + game_info.maxplayers)      
+    template = template.replace('{{p}}'             , game_info.minplayers + " - " + game_info.maxplayers)
     template = template.replace('{{d}}', str(game_info.mintime) + " - " + str(game_info.maxtime) if (int(game_info.mintime) < int(game_info.maxtime)) else str(game_info.mintime))
     template = template.replace('{{Weight}}'        , str(round(float(game_info.avg_weight) * 2, 1) )) #Weight is doubled to be on the same scale with rating.
     template = template.replace('{{Rating}}', str(round(float(game_info.avg_rating), 1)) if ("N/A" in game_info.my_rating) else str(round((float(game_info.avg_rating) + float(game_info.my_rating)) / 2, 1)))
@@ -231,20 +233,24 @@ def validate_username(user_name):
     return user_name
 
 def clean_up(config):
-    if(args.clean_images):
-        for f in os.listdir(config.images_path):
-            if(os.path.exists(os.path.join(config.images_path, f))):
-                if(f == 'icon_players.png' or f == 'icon_duration.png'):
-                    continue
-                os.remove(os.path.join(config.images_path, f))
-        if(args.clean_xml != True):
-            sys.exit()
-    if(args.clean_xml):
-        if(os.path.exists(config.collection_xml)):
-            os.remove(config.collection_xml)
-        for f in os.listdir(config.xml_path):
-            if(os.path.join(config.xml_path, f)):
-                os.remove(os.path.join(config.xml_path, f))
+    if args.clean_images or args.clean_xml or args.clean_all:
+        logging.info('Cleaning...')
+        if args.clean_images or args.clean_all:
+            for f in os.listdir(config.images_path):
+                if(os.path.exists(os.path.join(config.images_path, f))):
+                    if(f == 'icon_players.png' or f == 'icon_duration.png'):
+                        continue
+                    os.remove(os.path.join(config.images_path, f))
+        if args.clean_xml or args.clean_all:
+            if(os.path.exists(config.collection_xml)):
+                os.remove(config.collection_xml)
+            for f in os.listdir(config.xml_path):
+                if(os.path.join(config.xml_path, f)):
+                    os.remove(os.path.join(config.xml_path, f))
+        if args.clean_all:
+            with contextlib.suppress(FileNotFoundError):
+                os.remove(config.output)
+                os.remove(config.collection_xml)
         sys.exit()
 
 def write_output_header(config):
@@ -264,7 +270,7 @@ def read_collection(config):
     #Otherwise we request the XML from BGG
     else:
         logging.warning('Reading collection from bgg')
-        
+
         status = 0
         params = {'username': config.user_name, 'stats': 1}
 
@@ -273,7 +279,7 @@ def read_collection(config):
 
         collection_response = bgg_getter('collection',params, config)
         with open(config.collection_xml, 'w', encoding="utf-8") as file:
-            file.write(collection_response.text) 
+            file.write(collection_response.text)
             return ElementTree.fromstring(collection_response.content)
 
 def download_and_split_collection_object_info(config, newids):
@@ -315,7 +321,7 @@ def gather_index_info(config, gameinfo, item):
 
 def write_index(config):
     if(config.index):
-        
+
         with open(config.output, 'a') as file:
             i = 1
             break_point = 250
@@ -352,7 +358,7 @@ def write_output_trailer(config):
     with open(config.output, 'a') as file:
             file.write("</body></html>")
 
-######### End Functions ######### 
+######### End Functions #########
 
 #Get arguments.
 args = parse_arguments()
@@ -395,8 +401,8 @@ for item in items:
         else:
             logging.error('game not found')
             #Pull the game info XML
-            game_info_response = bgg_getter('thing', {'id': collection_info.obj_id, 'stats': 1} , config)   
-                             
+            game_info_response = bgg_getter('thing', {'id': collection_info.obj_id, 'stats': 1} , config)
+
             #Write out the game info XML.
             with open(collection_info.game_xml, 'w', encoding="utf-8") as file:
                 logging.info("Writing: " + collection_info.game_name + " to " + collection_info.game_xml)
@@ -406,7 +412,7 @@ for item in items:
         #Now that we have all of the information we need, create the HTML page.
         if(thisgameitems.attrib['type'] == "boardgame"):
             game_info = game_information(thisgameitems, config, collection_info)
-            download_image(config, game_info)          
+            download_image(config, game_info)
             template_to_output_entry(config, game_info)
             gather_index_info(config, game_info, item)
 
