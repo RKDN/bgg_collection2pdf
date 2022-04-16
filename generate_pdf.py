@@ -269,7 +269,7 @@ def write_output_header(config):
             file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
 
 def read_collection(config):
-    if not (config.no_cache)
+    if not (config.no_cache):
         #Check if collection.xml exists. If it does, read it.
         if(os.path.exists(config.collection_xml)):
             logging.warning('Reading ' + config.collection_xml)
