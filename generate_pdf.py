@@ -205,7 +205,7 @@ def template_to_output_entry(config, game_info):
     template = template.replace('{{Rating}}', str(round(float(game_info.avg_rating), 1)) if ("N/A" in game_info.my_rating) else str(round((float(game_info.avg_rating) + float(game_info.my_rating)) / 2, 1)))
 
     #Write to output.html
-    with open('output.html', 'a', encoding="utf-8") as file:
+    with open(config.output, 'a', encoding="utf-8") as file:
         file.write(template)
 
 def download_image(config, game_info):
@@ -269,11 +269,12 @@ def write_output_header(config):
             file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
 
 def read_collection(config):
-    #Check if collection.xml exists. If it does, read it.
-    if(os.path.exists(config.collection_xml)):
-        logging.warning('Reading ' + config.collection_xml)
-        with open(config.collection_xml, 'r', encoding="utf-8") as file:
-            return ElementTree.fromstring(file.read())
+    if not (config.no_cache)
+        #Check if collection.xml exists. If it does, read it.
+        if(os.path.exists(config.collection_xml)):
+            logging.warning('Reading ' + config.collection_xml)
+            with open(config.collection_xml, 'r', encoding="utf-8") as file:
+                return ElementTree.fromstring(file.read())
 
     #Otherwise we request the XML from BGG
     else:
