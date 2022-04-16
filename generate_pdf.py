@@ -1,7 +1,6 @@
 import requests
 import textwrap
 import shutil
-import math
 import argparse
 import os
 import sys
@@ -49,10 +48,11 @@ class collection_information:
         self.own        = item.find('status').attrib['own'] == "1"
         self.my_rating  = item.find('stats').find('rating').attrib['value']
         self.avg_rating = item.find('stats').find('rating').find('average').attrib['value']
+        self.my_image   = item.find('image').text
 
 class game_information:
     def __init__(self, items, config, collection_info):
-        self.image                  = get_prop_text(items, 'image')
+        self.image                  = collection_info.my_image
         self.name                   = get_prop_value(items, 'name')
         self.obj_id                 = collection_info.obj_id
         self.my_rating              = collection_info.my_rating
@@ -97,8 +97,11 @@ def bgg_getter (command, params, config):
         status = a.status_code
         if(status != 200):
             error = ElementTree.fromstring(a.content)
-            print(error);
-            logging.info("Sleeping " + str(config.sleep_time) + " Seconds: " + (error.find('message').text if error != None else str(status)))
+            try:
+                err_msg = error.find('message').text
+            except:
+                err_msg = "HTTP Status " + str(status)
+            logging.info("Sleeping " + str(config.sleep_time) + " Seconds: " + (err_msg))
             sleep(config.sleep_time)
             config.sleep_time *= 2
             config.sleep_time = min(config.sleep_time_max,config.sleep_time)
