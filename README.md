@@ -38,6 +38,7 @@ Print with no margins on US Letter paper. Make sure you enable "Print Background
   -i, --index           Enables creating an index. (default=Off)
   --clean_images        Clear out local images cache. (default=Off)
   --clean_xml           Clear out local xml cache. (default=Off)
+  --clean_all           Clear out Images, XML, and all other generated files. (default=Off)
   -o, --own             Enables pulling only games set to own on BGG. (default=Off)
   --minsleep MINSLEEP   Minimum sleep duration on XML error. (Default=10)
   --maxsleep MAXSLEEP   Maximum sleep duration on XML error. (Default=120)
