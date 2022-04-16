@@ -21,6 +21,7 @@ class config:
         self.successful_responses    = 0
         self.dict_player_count       = {}
         self.dict_category           = {}
+        self.dict_game_info           = {}
 
         self.user_name               = args.username
         self.card_mode               = args.cardmode or False
@@ -37,6 +38,7 @@ class config:
 
         self.sleep_time              = int(args.minsleep) if len(args.minsleep) > 0 else 10
         self.sleep_time_max          = int(args.maxsleep) if len(args.maxsleep) > 0 else 120
+        self.no_cache                = args.no_cache or False
 
 class collection_information:
     def __init__(self, item, config):
@@ -127,6 +129,7 @@ def parse_arguments():
     parser.add_argument('--images_path', dest='images_path', action='store', default='', help='Images path. (Default="./Images")')
     parser.add_argument('--xml_path', dest='xml_path', action='store', default='', help='Game XML Path. (Default="./game_xml")')
     parser.add_argument('--collection_xml', dest='collection_xml', action='store', default='', help='Output collection XML file.(Default="./collection.xml")')
+    parser.add_argument('--no_cache', dest='no_cache', action='store_true', help='Turn off all caching (default=Off)')
     return parser.parse_args()
 
 def get_value(item):
@@ -184,7 +187,11 @@ def template_to_output_entry(config, game_info):
     template = open_template(config)
 
     #Replace values in the template.
-    template = template.replace('{{image}}'         , os.path.join(config.images_path, game_info.obj_id + ".jpg") or "")
+    if(config.no_cache):
+        template = template.replace('{{image}}'     , game_info.image or "")
+    else:
+        template = template.replace('{{image}}'     , os.path.join(config.images_path, game_info.obj_id + ".jpg") or "")
+
     template = template.replace('{{GameName}}'      , game_info.name                            or "N/A")
     template = template.replace('{{Description}}'   , game_info.description                     or "N/A")
     template = template.replace('{{Published}}'     , game_info.published                       or "N/A")
@@ -206,14 +213,15 @@ def template_to_output_entry(config, game_info):
         file.write(template)
 
 def download_image(config, game_info):
-    #If we have a local cache of the image, then don't try to redownload it, use the local copy.
-    if(os.path.exists(os.path.join(config.images_path, game_info.obj_id + ".jpg")) == False):
-        #Download the image to the local cache.
-        res = requests.get(game_info.image, stream = True)
-        if res.status_code == 200:
-            logging.info("Writing: " + collection_info.game_name + " boxart to " + os.path.join(config.images_path, game_info.obj_id + ".jpg"))
-            with open(os.path.join(config.images_path, game_info.obj_id + ".jpg"), 'wb') as f:
-                shutil.copyfileobj(res.raw, f)
+    if not (config.no_cache):
+        #If we have a local cache of the image, then don't try to redownload it, use the local copy.
+        if(os.path.exists(os.path.join(config.images_path, game_info.obj_id + ".jpg")) == False):
+            #Download the image to the local cache.
+            res = requests.get(game_info.image, stream = True)
+            if res.status_code == 200:
+                logging.info("Writing: " + collection_info.game_name + " boxart to " + os.path.join(config.images_path, game_info.obj_id + ".jpg"))
+                with open(os.path.join(config.images_path, game_info.obj_id + ".jpg"), 'wb') as f:
+                    shutil.copyfileobj(res.raw, f)
 
 def break_if_required(file, line_text, do_break):
     if(do_break):
@@ -289,10 +297,14 @@ def read_collection(config):
 def download_and_split_collection_object_info(config, newids):
     newgamexmls = bgg_getter('thing', {'id': ','.join(newids), 'stats': 1}, config)
     for item in ElementTree.fromstring(newgamexmls.content):
-        game_xml_path = os.path.join(config.xml_path, item.attrib['id'] + '.xml')
-        with open(game_xml_path, 'w', encoding='utf-8') as file:
-            logging.info(f'Writing to {game_xml_path}')
-            file.write(ElementTree.tostring(item, encoding='unicode'))
+        if not (config.no_cache):
+            game_xml_path = os.path.join(config.xml_path, item.attrib['id'] + '.xml')
+            with open(game_xml_path, 'w', encoding='utf-8') as file:
+                logging.info(f'Writing to {game_xml_path}')
+                file.write(ElementTree.tostring(item, encoding='unicode'))
+        else:
+            config.dict_game_info[item.attrib['id']] = item
+        
 
 def find_and_download_new_collection_object_info(config, collection):
     newids = set()
@@ -399,19 +411,21 @@ for item in items:
     #Grab only games we own unless own isn't set.
     if(config.only_own == False or collection_info.own):
         #Check to see if the XML already exists. If it does, don't re-request it.
-        if(os.path.exists(collection_info.game_xml)):
+        if(os.path.exists(collection_info.game_xml) and not config.no_cache):
             with open(collection_info.game_xml, 'r', encoding="utf-8") as file:
                 thisgameitems = ElementTree.fromstring(file.read())
+        elif not (config.no_cache):
+                logging.error('game not found')
+                #Pull the game info XML
+                game_info_response = bgg_getter('thing', {'id': collection_info.obj_id, 'stats': 1} , config)
+                
+                #Write out the game info XML.
+                with open(collection_info.game_xml, 'w', encoding="utf-8") as file:
+                    logging.info("Writing: " + collection_info.game_name + " to " + collection_info.game_xml)
+                    file.write(game_info_response.text)
+                    thisgameitems = ElementTree.fromstring(game_info_response.content)
         else:
-            logging.error('game not found')
-            #Pull the game info XML
-            game_info_response = bgg_getter('thing', {'id': collection_info.obj_id, 'stats': 1} , config)
-
-            #Write out the game info XML.
-            with open(collection_info.game_xml, 'w', encoding="utf-8") as file:
-                logging.info("Writing: " + collection_info.game_name + " to " + collection_info.game_xml)
-                file.write(game_info_response.text)
-                thisgameitems = ElementTree.fromstring(game_info_response.content)
+            thisgameitems = config.dict_game_info[collection_info.obj_id]
 
         #Now that we have all of the information we need, create the HTML page.
         if(thisgameitems.attrib['type'] == "boardgame"):
