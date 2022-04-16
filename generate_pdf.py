@@ -1,7 +1,6 @@
 import requests
 import textwrap
 import shutil
-import math
 import argparse
 import os
 import sys
@@ -96,8 +95,12 @@ def bgg_getter (command, params, config):
         status = a.status_code
         if(status != 200):
             error = ElementTree.fromstring(a.content)
-            print(error);
-            logging.info("Sleeping " + str(config.sleep_time) + " Seconds: " + (error.find('message').text if error != None else str(status)))
+            print(error)
+            try:
+                err_msg = error.find('message').text
+            except:
+                err_msg = str(status)
+            logging.info("Sleeping " + str(config.sleep_time) + " Seconds: " + (err_msg))
             sleep(config.sleep_time)
             config.sleep_time *= 2
             config.sleep_time = min(config.sleep_time_max,config.sleep_time)
