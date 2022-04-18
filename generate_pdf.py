@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 import requests
 import textwrap
 import shutil
@@ -39,6 +41,7 @@ class config:
         self.sleep_time              = int(args.minsleep) if len(args.minsleep) > 0 else 10
         self.sleep_time_max          = int(args.maxsleep) if len(args.maxsleep) > 0 else 120
         self.no_cache                = args.no_cache or False
+        self.web_mode                = os.path.exists("./app.py")
 
 class collection_information:
     def __init__(self, item, config):
@@ -198,10 +201,15 @@ def template_to_output_entry(config, game_info):
     template = template.replace('{{Designer}}'      , game_info.designer                        or "N/A")
     template = template.replace('{{Artist}}'        , game_info.artist1                         or "N/A")
     template = template.replace('{{Category}}'      , (game_info.category1                      or "") + "<br/>" + (game_info.category2 or ""))
-    template = template.replace('{{Cat0}}'          ,         (game_info.mechanic1              or ""))
-    template = template.replace('{{Cat1}}'          , " , " + (game_info.mechanic2              or ""))
-    template = template.replace('{{Cat2}}'          , " , " + (game_info.mechanic3              or "") if (mechanics_list_max_length >= game_info.three_mechanics_length) else "")
-    template = template.replace('{{Cat3}}'          , " , " + (game_info.mechanic4              or "") if (mechanics_list_max_length >= game_info.four_mechanics_length) else "")
+
+    if (mechanics_list_max_length >= game_info.four_mechanics_length):
+        mechanics = [game_info.mechanic1, game_info.mechanic2, game_info.mechanic3, game_info.mechanic4]
+    elif (mechanics_list_max_length >= game_info.three_mechanics_length):
+        mechanics = [game_info.mechanic1, game_info.mechanic2, game_info.mechanic3]
+    else:
+        mechanics = [game_info.mechanic1, game_info.mechanic2]
+
+    template = template.replace('{{Mec}}', ",".join(item for item in mechanics if item))
     template = template.replace('{{p}}'             , game_info.minplayers + " - " + game_info.maxplayers)
     template = template.replace('{{d}}', str(game_info.mintime) + " - " + str(game_info.maxtime) if (int(game_info.mintime) < int(game_info.maxtime)) else str(game_info.mintime))
     template = template.replace('{{Weight}}'        , str(round(float(game_info.avg_weight) * 2, 1) )) #Weight is doubled to be on the same scale with rating.
@@ -265,11 +273,31 @@ def clean_up(config):
         sys.exit()
 
 def write_output_header(config):
-    with open(config.output, 'w') as file:
-        if(config.card_mode):
-            file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
+    with open(config.output, 'w') as file:      
+        if(config.web_mode):
+            if(config.card_mode):
+                file.write('<html><head><link href="{{ url_for(\'static\', filename=\'styles/style_card.css\')}}" rel="stylesheet" type="text/css"></head><body>')
+            else:
+                file.write('<html><head><link href="{{ url_for(\'static\', filename=\'styles/style.css\')}}" rel="stylesheet" type="text/css"></head><body>')
         else:
-            file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
+            if(config.card_mode):
+                file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
+            else:
+                file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
+
+def request_collection(config):        
+    logging.warning('Reading collection from bgg')
+
+    status = 0
+    params = {'username': config.user_name, 'stats': 1}
+
+    if config.only_own:
+        params['own'] = 1
+
+    collection_response = bgg_getter('collection',params, config)
+    with open(config.collection_xml, 'w', encoding="utf-8") as file:
+        file.write(collection_response.text)
+        return ElementTree.fromstring(collection_response.content)
 
 def read_collection(config):
     if not (config.no_cache):
@@ -279,20 +307,13 @@ def read_collection(config):
             with open(config.collection_xml, 'r', encoding="utf-8") as file:
                 return ElementTree.fromstring(file.read())
 
+        #Otherwise we request the XML from BGG
+        else:
+          return request_collection(config)  
+
     #Otherwise we request the XML from BGG
     else:
-        logging.warning('Reading collection from bgg')
-
-        status = 0
-        params = {'username': config.user_name, 'stats': 1}
-
-        if config.only_own:
-            params['own'] = 1
-
-        collection_response = bgg_getter('collection',params, config)
-        with open(config.collection_xml, 'w', encoding="utf-8") as file:
-            file.write(collection_response.text)
-            return ElementTree.fromstring(collection_response.content)
+        return request_collection(config)  
 
 def download_and_split_collection_object_info(config, newids):
     newgamexmls = bgg_getter('thing', {'id': ','.join(newids), 'stats': 1}, config)
