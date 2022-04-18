@@ -51,11 +51,11 @@ class collection_information:
         self.own        = item.find('status').attrib['own'] == "1"
         self.my_rating  = item.find('stats').find('rating').attrib['value']
         self.avg_rating = item.find('stats').find('rating').find('average').attrib['value']
-        self.my_image   = item.find('image').text
+        self.my_image   = item.find('image').text if item.find('image') != None else ""
 
 class game_information:
     def __init__(self, items, config, collection_info):
-        self.image                  = collection_info.my_image
+        self.image                  = collection_info.my_image if collection_info.my_image != "" else get_prop_text(items, 'image')
         self.name                   = get_prop_value(items, 'name')
         self.obj_id                 = collection_info.obj_id
         self.my_rating              = collection_info.my_rating
