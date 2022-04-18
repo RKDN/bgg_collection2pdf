@@ -156,6 +156,7 @@ hr {
 
 h2 {
     margin-bottom:1px;
+    line-height: calc(5px + 1.1vh);
 }
 
 .info_icon {
