@@ -283,14 +283,14 @@ def write_output_header(config):
     with open(config.output, 'w') as file:      
         if(config.web_mode):
             if(config.card_mode):
-                file.write('<html><head><link href="{{ url_for(\'static\', filename=\'styles/style_card.css\')}}" rel="stylesheet" type="text/css"></head><body>')
+                file.write('<html><head><meta name="viewport" content="width=device-width, initial-scale=1"><link href="{{ url_for(\'static\', filename=\'styles/style_card.css\')}}" rel="stylesheet" type="text/css"></head><body>')
             else:
-                file.write('<html><head><link href="{{ url_for(\'static\', filename=\'styles/style.css\')}}" rel="stylesheet" type="text/css"></head><body>')
+                file.write('<html><head><meta name="viewport" content="width=device-width, initial-scale=1"><link href="{{ url_for(\'static\', filename=\'styles/style.css\')}}" rel="stylesheet" type="text/css"></head><body>')
         else:
             if(config.card_mode):
-                file.write('<html><head><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
+                file.write('<html><head><meta name="viewport" content="width=device-width, initial-scale=1"><link href="style_card.css" rel="stylesheet" type="text/css"></head><body>')
             else:
-                file.write('<html><head><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
+                file.write('<html><head><meta name="viewport" content="width=device-width, initial-scale=1"><link href="style.css" rel="stylesheet" type="text/css"></head><body>')
 
 def request_collection(config):        
     logging.warning('Reading collection from bgg')
