@@ -238,18 +238,25 @@ def break_if_required(file, line_text, do_break):
         if(len(line_text) > 0):
             file.write("<br><li><b>" + line_text + "</b></li>\n")
 
-def validate_username(user_name):
+def write_error_to_output_html_and_close(config, error):
+    write_output_header(config)
+    with open(config.output, 'w') as file:  
+        file.write(error)
+    write_output_trailer(config)
+    sys.exit()
+
+def validate_username(config):
     validUserName   = False
     while not validUserName:
-        thisdata = bgg_getter('user', {'name': user_name}, config)
+        thisdata = bgg_getter('user', {'name': config.user_name}, config)
         root = ElementTree.fromstring(thisdata.content)
         if root.attrib['id']:
             validUserName = True
-            logging.info(f'UserName: {user_name} is valid')
+            logging.info(f'UserName: {config.user_name} is valid')
         else:
-            logging.warning(f'UserName: {user_name} was not valid')
-            user_name = input("Enter your BGG UserName: ")
-    return user_name
+            logging.warning(f'UserName: {config.user_name} was not valid')
+            write_error_to_output_html_and_close(config, f'UserName: {config.user_name} was not valid')
+    return config.user_name
 
 def clean_up(config):
     if args.clean_images or args.clean_xml or args.clean_all:
@@ -413,7 +420,7 @@ clean_up(config)
 os.makedirs(config.xml_path, exist_ok=True)
 
 #Validate the username
-config.user_name = validate_username(config.user_name)
+config.user_name = validate_username(config)
 
 logging.info('starting')
 
