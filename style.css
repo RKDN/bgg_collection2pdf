@@ -34,18 +34,12 @@
 
 .left_column {
     float:left;
-   
-    display: flex;
-    align-items:center;
 
     margin-right:5px;
     margin-bottom:5px;
 
     width:18%;
     height:24%;
-    align-content: center;
-    text-align:center;
-    vertical-align: center;
 }
 
 .box_art {
